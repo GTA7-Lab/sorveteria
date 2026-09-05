@@ -93,3 +93,24 @@ export interface CoreError {
 export function isError(value: unknown): value is CoreError {
   return typeof value === "object" && value !== null && "error" in value;
 }
+
+/**
+ * Cliente cadastrado da sorveteria. Diferente de flavors/formats/promos, que sao
+ * catalogo fixo, a lista de clientes muda em runtime — ela vive em src/store.ts,
+ * nao no bundle. `dietary` e `allergens` usam a mesma taxonomia dos sabores de
+ * proposito: e o que permite cruzar o cadastro com o cardapio.
+ */
+export interface Customer {
+  id: string;
+  name: string;
+  phone: string | null;
+  email: string | null;
+  district: string | null;
+  dietary: DietaryTag[];
+  allergens: Allergen[];
+  /** Ids de data/flavors.json, validados na escrita. */
+  favorite_flavor_ids: string[];
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+}

@@ -1,13 +1,15 @@
 {
   "id": "icecream",
   "name": "Sorveteria Polar",
-  "description": "Sorveteria artesanal da cidade GTA7 Lab: consulta sabores, preços e disponibilidade, calcula o preço de um pedido e recomenda sabores por perfil e restrição alimentar.",
+  "description": "Sorveteria artesanal da cidade GTA7 Lab: consulta sabores, preços e disponibilidade, calcula o preço de um pedido, recomenda sabores por perfil e restrição alimentar, e mantém o cardápio e o cadastro de clientes.",
   "capabilities": [
     "consultar_cardapio",
     "filtrar_por_restricao_alimentar",
     "consultar_horario_e_disponibilidade",
     "calcular_preco_pedido",
-    "recomendar_sabores"
+    "recomendar_sabores",
+    "gerenciar_cardapio",
+    "cadastrar_clientes"
   ],
   "mcp": {
     "transport": "http",
@@ -23,9 +25,51 @@
       {
         "name": "recommend_flavors",
         "description": "Recomenda de 1 a 5 sabores conforme um perfil de gosto e restrições alimentares, com uma justificativa por sugestão."
+      },
+      {
+        "name": "create_flavor",
+        "description": "Cria um sabor no cardápio. Exige palavra mágica. Recusa incoerência entre dieta e alergênico.",
+        "requires_magic_word": true
+      },
+      {
+        "name": "update_flavor",
+        "description": "Atualiza um sabor do cardápio. Exige palavra mágica. O id nunca muda.",
+        "requires_magic_word": true
+      },
+      {
+        "name": "delete_flavor",
+        "description": "Remove um sabor. Exige palavra mágica. Recusa remover o sabor do dia e limpa os favoritos afetados.",
+        "requires_magic_word": true
+      },
+      {
+        "name": "list_customers",
+        "description": "Lista os clientes cadastrados, com filtro por texto, restrição alimentar, alergênico declarado e sabor favorito."
+      },
+      {
+        "name": "get_customer",
+        "description": "Devolve o cadastro completo de um cliente pelo id."
+      },
+      {
+        "name": "create_customer",
+        "description": "Cadastra um cliente novo; só o nome é obrigatório e o id é gerado a partir dele.",
+        "requires_magic_word": true
+      },
+      {
+        "name": "update_customer",
+        "description": "Atualiza um cliente existente; campo omitido fica intocado.",
+        "requires_magic_word": true
+      },
+      {
+        "name": "delete_customer",
+        "description": "Remove um cliente do cadastro e devolve o registro removido.",
+        "requires_magic_word": true
       }
     ],
-    "endpoint": "/api/mcp"
+    "endpoint": "/api/mcp",
+    "write_protection": {
+      "parameter": "magic_word",
+      "description": "Toda tool de escrita exige o parâmetro magic_word, conferido contra ICECREAM_MAGIC_WORD no servidor. Sem a variável configurada a entidade fica somente-leitura. As tools de leitura não exigem nada."
+    }
   },
   "http": {
     "manifest": "GET /api/manifest",

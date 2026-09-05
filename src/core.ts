@@ -1,8 +1,13 @@
-// Toda a regra de negocio da Sorveteria Polar vive aqui.
+// Leitura e calculo da Sorveteria Polar: busca no cardapio, horario da loja,
+// orcamento de pedido e recomendacao. A escrita mora em src/flavors.ts (sabores)
+// e src/customers.ts (clientes), que exigem palavra magica.
+//
 // As rotas /api e o servidor MCP sao wrappers finos sobre estas funcoes.
 // Nenhuma funcao lanca excecao: em caso de falha retornam { error: { code, message } }.
+// As leituras de sabor sao assincronas porque o cardapio tem CRUD e vem do store.
 
-import { flavors, formats, toppings, promos, shop } from "./data";
+import { readFlavors, formats, toppings, promos, shop } from "./data";
+import { isError } from "./types";
 import type { Flavor, Format, Topping, Promo, CoreError, Allergen } from "./types";
 
 // ---------------------------------------------------------------- helpers
@@ -14,6 +19,19 @@ export function normalize(text: string): string {
 
 function fail(code: string, message: string): CoreError {
   return { error: { code, message } };
+}
+
+/**
+ * Le o cardapio do store convertendo qualquer falha em CoreError. Sem isto uma queda
+ * do Redis viraria excecao vazando do core, e a entidade inteira e construida sobre a
+ * promessa oposta: nenhuma funcao lanca, toda falha volta como { error }.
+ */
+async function loadMenu(): Promise<Flavor[] | CoreError> {
+  try {
+    return await readFlavors();
+  } catch (err) {
+    return fail("STORAGE_ERROR", "Nao foi possivel ler o cardapio: " + ((err as Error)?.message ?? err));
+  }
 }
 
 const WEEKDAY_KEYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
@@ -78,7 +96,9 @@ export interface SearchFlavorsResult {
   flavors: Flavor[];
 }
 
-export function searchFlavors(params: SearchFlavorsParams = {}): SearchFlavorsResult | CoreError {
+export async function searchFlavors(
+  params: SearchFlavorsParams = {},
+): Promise<SearchFlavorsResult | CoreError> {
   const { query, category, dietary, max_price, avoid_allergens } = params;
   const onlyAvailable = params.only_available !== false; // padrao: true
 
@@ -91,7 +111,10 @@ export function searchFlavors(params: SearchFlavorsParams = {}): SearchFlavorsRe
   const diet = dietary ? normalize(dietary) : null;
   const avoid = (avoid_allergens ?? []).map(normalize);
 
-  const result = flavors.filter((f) => {
+  const menu = await loadMenu();
+  if (isError(menu)) return menu;
+
+  const result = menu.filter((f) => {
     if (onlyAvailable && !f.available) return false;
     if (cat && normalize(f.category) !== cat) return false;
     // A dieta vem SEMPRE do array dietary, nunca da categoria nem do texto.
@@ -109,9 +132,12 @@ export function searchFlavors(params: SearchFlavorsParams = {}): SearchFlavorsRe
   };
 }
 
-export function getFlavor(id: string): Flavor | CoreError {
+export async function getFlavor(id: string): Promise<Flavor | CoreError> {
   if (!id) return fail("MISSING_ID", "Informe o id do sabor.");
-  const found = flavors.find((f) => f.id === normalize(id));
+  const menu = await loadMenu();
+  if (isError(menu)) return menu;
+
+  const found = menu.find((f) => f.id === normalize(id));
   if (!found) {
     return fail("FLAVOR_NOT_FOUND", "Sabor \"" + id + "\" nao existe no cardapio da Sorveteria Polar.");
   }
@@ -120,7 +146,7 @@ export function getFlavor(id: string): Flavor | CoreError {
 
 // ---------------------------------------------------------------- loja
 
-export function getShopInfo(datetime?: string) {
+export async function getShopInfo(datetime?: string) {
   const now = resolveNow(datetime);
   const window = shop.hours[WEEKDAY_KEYS[now.weekday]] ?? null;
 
@@ -133,7 +159,14 @@ export function getShopInfo(datetime?: string) {
       : now.minutes >= open || now.minutes < close; // janela que cruza a meia-noite
   }
 
-  const featured = flavors.find((f) => f.id === shop.flavor_of_the_day) ?? null;
+  // Os dados da loja (endereco, horario, is_open) nao dependem do store, entao uma
+  // falha ao ler o cardapio nao derruba a rota: so o sabor do dia fica indisponivel,
+  // e o aviso diz por que — melhor que um 500 ou um null silencioso.
+  const menu = await loadMenu();
+  const featured = isError(menu)
+    ? null
+    : menu.find((f) => f.id === shop.flavor_of_the_day) ?? null;
+  const warnings = isError(menu) ? [menu.error.message] : [];
 
   return {
     id: shop.id,
@@ -153,6 +186,7 @@ export function getShopInfo(datetime?: string) {
     today_hours: window,
     checked_at: now.iso,
     flavor_of_the_day: featured,
+    warnings,
   };
 }
 
@@ -205,7 +239,7 @@ function discountFor(promo: Promo, format: Format, subtotal: number): number {
     : Math.min(rule.value, subtotal);
 }
 
-export function quoteOrder(params: QuoteOrderParams): QuoteOrderResult | CoreError {
+export async function quoteOrder(params: QuoteOrderParams): Promise<QuoteOrderResult | CoreError> {
   const format = formats.find((f) => f.id === normalize(params.format ?? ""));
   if (!format) {
     return fail(
@@ -226,11 +260,14 @@ export function quoteOrder(params: QuoteOrderParams): QuoteOrderResult | CoreErr
     );
   }
 
+  const menu = await loadMenu();
+  if (isError(menu)) return menu;
+
   const chosen: Flavor[] = [];
   const unknown: string[] = [];
   const unavailable: string[] = [];
   for (const id of flavorIds) {
-    const f = flavors.find((x) => x.id === normalize(String(id)));
+    const f = menu.find((x) => x.id === normalize(String(id)));
     if (!f) unknown.push(String(id));
     else if (!f.available) unavailable.push(f.id);
     else chosen.push(f);
@@ -292,7 +329,7 @@ export function quoteOrder(params: QuoteOrderParams): QuoteOrderResult | CoreErr
     weekday,
     weekday_name: WEEKDAY_NAMES_PT[weekday],
     allergens,
-    is_open: getShopInfo().is_open,
+    is_open: (await getShopInfo()).is_open,
   };
 }
 
@@ -350,11 +387,11 @@ export interface RecommendParams {
   limit?: number;
 }
 
-export function recommendFlavors(params: RecommendParams = {}) {
+export async function recommendFlavors(params: RecommendParams = {}) {
   const limit = Math.min(Math.max(params.limit ?? 3, 1), 5);
   const profile = normalize(params.profile ?? "");
 
-  const pool = searchFlavors({
+  const pool = await searchFlavors({
     dietary: params.dietary,
     avoid_allergens: params.avoid_allergens,
     only_available: true,
@@ -401,6 +438,12 @@ export function getCatalog() {
 export const MANIFEST = {
   id: "icecream",
   name: "Sorveteria Polar",
-  description: "Consulta sabores, precos e disponibilidade da sorveteria da cidade",
-  tools: ["search_flavors", "quote_order", "recommend_flavors"],
+  description: "Consulta sabores, precos e disponibilidade da sorveteria da cidade, mantem o cardapio e o cadastro de clientes",
+  tools: [
+    "search_flavors", "quote_order", "recommend_flavors",
+    "create_flavor", "update_flavor", "delete_flavor",
+    "list_customers", "get_customer", "create_customer", "update_customer", "delete_customer",
+  ],
+  /** As tools de escrita exigem o parametro magic_word; as de leitura, nao. */
+  write_tools_require: "magic_word",
 };

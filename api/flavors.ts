@@ -2,9 +2,9 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { searchFlavors } from "../src/core";
 import { respond, one, num, list } from "./_respond";
 
-export default function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   const onlyAvailable = one(req.query.only_available);
-  respond(res, searchFlavors({
+  respond(res, await searchFlavors({
     query: one(req.query.query),
     category: one(req.query.category),
     dietary: one(req.query.dietary),

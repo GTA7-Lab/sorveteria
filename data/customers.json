@@ -1,0 +1,54 @@
+[
+  {
+    "id": "marina-alcantara",
+    "name": "Marina Alcântara",
+    "phone": "(11) 98812-4471",
+    "email": "marina.alcantara@gta7.city",
+    "district": "Centro",
+    "dietary": ["sem_lactose"],
+    "allergens": ["leite"],
+    "favorite_flavor_ids": ["limao-siciliano", "acai-com-banana"],
+    "notes": "Trabalha no prédio em frente; passa quase toda sexta no fim da tarde.",
+    "created_at": "2026-08-14T13:20:00.000Z",
+    "updated_at": "2026-08-14T13:20:00.000Z"
+  },
+  {
+    "id": "otavio-brandao",
+    "name": "Otávio Brandão",
+    "phone": "(11) 99340-2210",
+    "email": null,
+    "district": "Vila Norte",
+    "dietary": [],
+    "allergens": ["castanhas", "amendoim"],
+    "favorite_flavor_ids": ["chocolate-belga-70"],
+    "notes": "Alergia séria a castanhas: confirmar contaminação cruzada antes de montar a taça.",
+    "created_at": "2026-08-21T18:05:00.000Z",
+    "updated_at": "2026-08-29T20:41:00.000Z"
+  },
+  {
+    "id": "clarice-fontes",
+    "name": "Clarice Fontes",
+    "phone": null,
+    "email": "clarice.fontes@gta7.city",
+    "district": "Centro",
+    "dietary": ["vegano", "sem_lactose"],
+    "allergens": [],
+    "favorite_flavor_ids": ["coco-queimado-vegano", "chocolate-vegano-zero"],
+    "notes": "Sempre pergunta o sabor do dia antes de decidir.",
+    "created_at": "2026-09-01T15:55:00.000Z",
+    "updated_at": "2026-09-01T15:55:00.000Z"
+  },
+  {
+    "id": "heitor-vasques",
+    "name": "Heitor Vasques",
+    "phone": "(11) 97722-1180",
+    "email": "heitor.vasques@gta7.city",
+    "district": "Beira-Rio",
+    "dietary": ["zero_acucar"],
+    "allergens": [],
+    "favorite_flavor_ids": ["zero-morango-light"],
+    "notes": "Diabético; pediu para nunca sugerir cobertura doce.",
+    "created_at": "2026-09-03T11:10:00.000Z",
+    "updated_at": "2026-09-03T11:10:00.000Z"
+  }
+]

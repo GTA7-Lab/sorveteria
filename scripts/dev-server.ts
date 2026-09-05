@@ -18,6 +18,16 @@ import mcpHandler from "../api/mcp";
 
 type Handler = (req: any, res: any) => void | Promise<void>;
 
+/** Os handlers viraram async; sem isto uma rejeicao viraria unhandled rejection silenciosa. */
+function run(handler: Handler, req: any, res: any): void {
+  Promise.resolve(handler(req, res)).catch((err) => {
+    console.error("[dev] handler falhou:", err);
+    if (!res.headersSent) {
+      res.status(500).json({ error: { code: "INTERNAL_ERROR", message: String(err?.message ?? err) } });
+    }
+  });
+}
+
 const ROUTES: Record<string, Handler> = {
   "/api/manifest": manifestHandler,
   "/api/shop": shopHandler,
@@ -68,10 +78,10 @@ const server = http.createServer(async (req, res) => {
     const direct = ROUTES[pathname];
     const byId = pathname.match(/^\/api\/flavors\/([^/]+)$/);
 
-    if (direct) return void direct(proxy, shim);
+    if (direct) return run(direct, proxy, shim);
     if (byId) {
       proxy.query = { ...query, id: decodeURIComponent(byId[1]) };
-      return void flavorByIdHandler(proxy, shim);
+      return run(flavorByIdHandler, proxy, shim);
     }
     return void shim.status(404).json({ error: { code: "NOT_FOUND", message: "Rota " + pathname + " nao existe." } });
   }
