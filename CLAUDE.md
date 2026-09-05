@@ -63,10 +63,11 @@ Dois transportes, mesmas tools:
   Busca textual segue disponível via `call_entity_tool`.
 
 ## Onde vive
-Pasta `entities/icecream/` do monorepo `GTA7-Lab/gta7-lab`, ao lado de `bank`,
-`restaurante-ai-q-fome` e `supermercado`. Convenção do repo: uma pasta por entidade
-em `entities/`, com nome igual ao `id` do seu `manifest.json`.
-No Vercel, projeto `gta7-icecream` (time GTA7 LAB), Root Directory = `entities/icecream`.
+Repositório próprio [`GTA7-Lab/sorveteria`](https://github.com/GTA7-Lab/sorveteria), com a
+entidade na raiz. Até 05/09/2026 ela era a pasta `entities/icecream/` do monorepo
+`GTA7-Lab/gta7-lab`; o histórico veio junto na migração. O Core registra a entidade pela URL
+de produção, não por caminho no repo, então a integração não depende de onde o código mora.
+No Vercel, projeto `gta7-icecream` (time GTA7 LAB), Root Directory = raiz do repositório.
 No ar em https://gta7-icecream.vercel.app
 
 ## Status atual

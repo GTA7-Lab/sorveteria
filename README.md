@@ -66,7 +66,7 @@ Registrar no Claude Code (ajuste o caminho absoluto):
   "mcpServers": {
     "icecream": {
       "command": "npx",
-      "args": ["tsx", "<caminho absoluto do repo>/entities/icecream/src/mcp/server.ts"]
+      "args": ["tsx", "<caminho absoluto do repo>/src/mcp/server.ts"]
     }
   }
 }
@@ -74,20 +74,18 @@ Registrar no Claude Code (ajuste o caminho absoluto):
 
 ## Repositório e deploy
 
-Esta entidade vive em `entities/icecream/` dentro do monorepo
+Esta entidade tem repositório próprio:
+[`GTA7-Lab/sorveteria`](https://github.com/GTA7-Lab/sorveteria), com o código na raiz.
+Até 05/09/2026 ela vivia em `entities/icecream/` do monorepo
 [`GTA7-Lab/gta7-lab`](https://github.com/GTA7-Lab/gta7-lab), ao lado de `bank`,
-`restaurante-ai-q-fome` e `supermercado`. Cada pasta em `entities/` é uma aplicação
-independente, com o nome igual ao `id` do seu `manifest.json`.
+`restaurante-ai-q-fome` e `supermercado` — o histórico foi migrado junto.
 
-No Vercel o projeto é o `gta7-icecream`, no time GTA7 LAB, com
-**Root Directory = `entities/icecream`**. Não há variáveis de ambiente nem build step:
-`public/index.html` é servido como estático e cada arquivo em `api/` vira uma
-serverless function.
+No Vercel o projeto é o `gta7-icecream`, no time GTA7 LAB, com **Root Directory na raiz
+do repositório**. Não há variáveis de ambiente nem build step: `public/index.html` é
+servido como estático e cada arquivo em `api/` vira uma serverless function.
 
-O deploy hoje é manual (`npx vercel --prod` de dentro de `entities/icecream/`). Para que
-cada push vire deploy automático, falta instalar a
-[GitHub App do Vercel](https://github.com/apps/vercel) no repositório e ligar o projeto
-ao Git com esse Root Directory.
+O deploy é automático pela GitHub App do Vercel: push na `main` publica em
+https://gta7-icecream.vercel.app
 
 ## Integração com o Core Orchestrator
 
