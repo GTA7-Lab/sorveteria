@@ -14,6 +14,7 @@ import flavorsHandler from "../api/flavors";
 import flavorByIdHandler from "../api/flavors/[id]";
 import quoteHandler from "../api/quote";
 import recommendHandler from "../api/recommend";
+import mcpHandler from "../api/mcp";
 
 type Handler = (req: any, res: any) => void | Promise<void>;
 
@@ -23,6 +24,7 @@ const ROUTES: Record<string, Handler> = {
   "/api/flavors": flavorsHandler,
   "/api/quote": quoteHandler,
   "/api/recommend": recommendHandler,
+  "/api/mcp": mcpHandler,
 };
 
 const PORT = Number(process.env.PORT ?? 3000);
@@ -57,7 +59,11 @@ const server = http.createServer(async (req, res) => {
   if (pathname.startsWith("/api/")) {
     const proxy = req as any;
     proxy.query = query;
-    if (req.method === "POST") proxy.body = await readBody(req);
+    if (req.method === "POST") {
+      const raw = await readBody(req);
+      // o transporte MCP espera o corpo ja parseado; as demais rotas aceitam a string
+      proxy.body = pathname === "/api/mcp" ? JSON.parse(raw || "{}") : raw;
+    }
 
     const direct = ROUTES[pathname];
     const byId = pathname.match(/^\/api\/flavors\/([^/]+)$/);

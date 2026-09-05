@@ -47,10 +47,16 @@ Preços sempre em **centavos** (inteiros), moeda `BRL`. Erros vêm como
 
 ## MCP
 
-Servidor stdio com três tools: `search_flavors`, `quote_order` e `recommend_flavors`.
+Três tools — `search_flavors`, `quote_order` e `recommend_flavors` — servidas por dois
+transportes que compartilham a mesma definição (`src/mcp/tools.ts`):
+
+- **HTTP streamable** em **`/api/mcp`** — é por aí que o Core Orchestrator da cidade consome.
+- **stdio**, para rodar local:
 
 ```bash
-npm run mcp
+npm run mcp                    # servidor stdio
+npm run test:mcp               # 13 asserções no /api/mcp local
+npm run test:mcp -- https://gta7-icecream.vercel.app/api/mcp   # contra producao
 ```
 
 Registrar no Claude Code (ajuste o caminho absoluto):
@@ -96,3 +102,7 @@ ao Git com esse Root Directory.
 
 Servido em `/api/manifest`. As rotas REST enviam `Access-Control-Allow-Origin: *`,
 então outras entidades da cidade podem consumi-las direto do navegador.
+
+A entidade está registrada em `core/data/entities.json` com transporte `http`,
+endpoint `/api/mcp` e tag `dessert` (acrescentada ao `core/src/lexicon.ts`, que
+mapeia palavras como "sorvete", "gelato" e "sobremesa" para essa tag).

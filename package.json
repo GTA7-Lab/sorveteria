@@ -8,7 +8,8 @@
     "smoke": "tsx scripts/smoke.ts",
     "typecheck": "tsc --noEmit",
     "dev": "vercel dev",
-    "dev:local": "tsx scripts/dev-server.ts"
+    "dev:local": "tsx scripts/dev-server.ts",
+    "test:mcp": "tsx scripts/test-mcp-http.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0",
