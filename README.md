@@ -1,5 +1,8 @@
 # Sorveteria Polar — entidade `icecream` da GTA7 Lab
 
+**No ar:** https://gta7-icecream.vercel.app · manifesto em
+[`/api/manifest`](https://gta7-icecream.vercel.app/api/manifest)
+
 Sorveteria artesanal da cidade digital GTA7 Lab. Publica cardápio, disponibilidade e horário,
 calcula o preço de um pedido e recomenda sabores por perfil e restrição alimentar.
 
@@ -33,9 +36,9 @@ npm run typecheck     # tsc --noEmit
 | `GET /api/recommend` | sugestões: `profile`, `dietary`, `avoid_allergens`, `limit` |
 
 ```bash
-curl "localhost:3000/api/flavors?dietary=vegano&max_price=1100"
-curl "localhost:3000/api/quote?format=casquinha&flavor_ids=baunilha-madagascar&weekday=2"
-curl -X POST localhost:3000/api/quote -H "Content-Type: application/json" \
+curl "https://gta7-icecream.vercel.app/api/flavors?dietary=vegano&max_price=1100"
+curl "https://gta7-icecream.vercel.app/api/quote?format=casquinha&flavor_ids=baunilha-madagascar&weekday=2"
+curl -X POST https://gta7-icecream.vercel.app/api/quote -H "Content-Type: application/json" \
   -d '{"format":"taca","flavor_ids":["chocolate-belga-70","pistache-siciliano"],"toppings":["chantilly"]}'
 ```
 
@@ -57,7 +60,7 @@ Registrar no Claude Code (ajuste o caminho absoluto):
   "mcpServers": {
     "icecream": {
       "command": "npx",
-      "args": ["tsx", "C:/Users/Pichau/Documents/Claude/Projects/GTA7-SORVETERIA/icecream/src/mcp/server.ts"]
+      "args": ["tsx", "<caminho absoluto do repo>/entities/icecream/src/mcp/server.ts"]
     }
   }
 }
@@ -65,14 +68,20 @@ Registrar no Claude Code (ajuste o caminho absoluto):
 
 ## Repositório e deploy
 
-Esta entidade vive em `icecream/` dentro do monorepo
-[`ericmgomes/gta7-lab`](https://github.com/ericmgomes/gta7-lab), ao lado das outras
-entidades da cidade. Cada pasta na raiz é uma aplicação independente, com o nome
-igual ao `id` do seu `manifest.json`.
+Esta entidade vive em `entities/icecream/` dentro do monorepo
+[`ericmgomes/gta7-lab`](https://github.com/ericmgomes/gta7-lab), ao lado de `bank`,
+`restaurante-ai-q-fome` e `supermercado`. Cada pasta em `entities/` é uma aplicação
+independente, com o nome igual ao `id` do seu `manifest.json`.
 
-No Vercel o projeto usa **Root Directory = `icecream`**. Não há variáveis de ambiente
-nem build step: `public/index.html` é servido como estático e cada arquivo em `api/`
-vira uma serverless function.
+No Vercel o projeto é o `gta7-icecream`, no time GTA7 LAB, com
+**Root Directory = `entities/icecream`**. Não há variáveis de ambiente nem build step:
+`public/index.html` é servido como estático e cada arquivo em `api/` vira uma
+serverless function.
+
+O deploy hoje é manual (`npx vercel --prod` de dentro de `entities/icecream/`). Para que
+cada push vire deploy automático, falta instalar a
+[GitHub App do Vercel](https://github.com/apps/vercel) no repositório e ligar o projeto
+ao Git com esse Root Directory.
 
 ## Integração com o Core Orchestrator
 

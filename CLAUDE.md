@@ -47,14 +47,20 @@ Chaves em inglês, conteúdo em português.
 - Tools MCP declaradas com **JSON Schema puro** (API de baixo nível do SDK), sem escrever schemas zod.
 
 ## Onde vive
-Pasta `icecream/` do monorepo `ericmgomes/gta7-lab`, ao lado de `restaurante-ai-q-fome/`.
-Convenção do repo: uma pasta por entidade, com nome igual ao `id` do seu `manifest.json`.
-No Vercel, Root Directory = `icecream`.
+Pasta `entities/icecream/` do monorepo `ericmgomes/gta7-lab`, ao lado de `bank`,
+`restaurante-ai-q-fome` e `supermercado`. Convenção do repo: uma pasta por entidade
+em `entities/`, com nome igual ao `id` do seu `manifest.json`.
+No Vercel, projeto `gta7-icecream` (time GTA7 LAB), Root Directory = `entities/icecream`.
+No ar em https://gta7-icecream.vercel.app
 
 ## Status atual
 v1 completa e verificada: 41/41 smoke tests, `tsc --noEmit` limpo, REST e site testados,
 handshake MCP (`initialize` → `tools/list` → `tools/call`) validado.
 
 ## Próxima tarefa
-Abrir PR de `entidade/icecream` para `main`. Depois, registrar a entidade no
-Core Orchestrator apontando para `/api/manifest`.
+Registrar a entidade no Core Orchestrator: `core/src/entities/` hoje só tem
+`restaurants.ts` e `venues.ts`, falta o equivalente para `icecream` apontando
+para `/api/manifest`.
+
+Deploy ainda é manual (`npx vercel --prod` dentro de `entities/icecream/`): a GitHub App
+do Vercel não está instalada no repositório, então push não dispara deploy automático.
