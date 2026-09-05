@@ -47,7 +47,7 @@ Chaves em inglês, conteúdo em português.
 - Tools MCP declaradas com **JSON Schema puro** (API de baixo nível do SDK), sem escrever schemas zod.
 
 ## Onde vive
-Pasta `entities/icecream/` do monorepo `ericmgomes/gta7-lab`, ao lado de `bank`,
+Pasta `entities/icecream/` do monorepo `GTA7-Lab/gta7-lab`, ao lado de `bank`,
 `restaurante-ai-q-fome` e `supermercado`. Convenção do repo: uma pasta por entidade
 em `entities/`, com nome igual ao `id` do seu `manifest.json`.
 No Vercel, projeto `gta7-icecream` (time GTA7 LAB), Root Directory = `entities/icecream`.
