@@ -69,7 +69,7 @@ Registrar no Claude Code (ajuste o caminho absoluto):
 ## Repositório e deploy
 
 Esta entidade vive em `entities/icecream/` dentro do monorepo
-[`ericmgomes/gta7-lab`](https://github.com/ericmgomes/gta7-lab), ao lado de `bank`,
+[`GTA7-Lab/gta7-lab`](https://github.com/GTA7-Lab/gta7-lab), ao lado de `bank`,
 `restaurante-ai-q-fome` e `supermercado`. Cada pasta em `entities/` é uma aplicação
 independente, com o nome igual ao `id` do seu `manifest.json`.
 
