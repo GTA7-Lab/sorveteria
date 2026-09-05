@@ -59,7 +59,7 @@ Dois transportes, mesmas tools:
 - **`max_price_brl` existe para o Core**, que fala em reais (slot `maxPricePerPerson`); internamente
   tudo continua em centavos.
 - **`query` não é mapeado no registro do Core**: ele manda a frase inteira do cidadão, que nunca casa
-  com nome de sabor e zeraria o resultado (limitação conhecida, documentada em `core/CLAUDE.md`).
+  com nome de sabor e zeraria o resultado (limitação conhecida, documentada no `CLAUDE.md` do Core).
   Busca textual segue disponível via `call_entity_tool`.
 
 ## Onde vive
@@ -73,9 +73,10 @@ No ar em https://gta7-icecream.vercel.app
 ## Status atual
 v1 completa e verificada: 41/41 no smoke do core, 17/17 no `/api/mcp`, `tsc --noEmit` limpo,
 REST e site testados em produção.
-Registrada no Core (`core/data/entities.json`, tag `dessert`): `npm run smoke` do Core passa
-com `icecream.search_flavors` devolvendo itens.
-Deploy automático: push na `main` publica em https://gta7-icecream.vercel.app
+Registrada no Core (`data/entities.json` do repo `GTA7-Lab/gta7-lab-core`, tag `dessert`):
+o `npm run smoke` do Core passa com `icecream.search_flavors` devolvendo itens. O registro é
+por URL de produção, então a entidade pode mudar de repositório sem mexer no Core.
+Deploy automático: push na `main` deste repositório publica em https://gta7-icecream.vercel.app
 
 ## Próxima tarefa
 Nada pendente. Ideias, se houver tempo: `orders.json` com `create_order` (exige banco ou

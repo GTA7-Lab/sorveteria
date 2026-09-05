@@ -101,6 +101,8 @@ https://gta7-icecream.vercel.app
 Servido em `/api/manifest`. As rotas REST enviam `Access-Control-Allow-Origin: *`,
 então outras entidades da cidade podem consumi-las direto do navegador.
 
-A entidade está registrada em `core/data/entities.json` com transporte `http`,
-endpoint `/api/mcp` e tag `dessert` (acrescentada ao `core/src/lexicon.ts`, que
-mapeia palavras como "sorvete", "gelato" e "sobremesa" para essa tag).
+A entidade está registrada em `data/entities.json` do repo
+[`GTA7-Lab/gta7-lab-core`](https://github.com/GTA7-Lab/gta7-lab-core) com transporte `http`,
+endpoint `/api/mcp` e tag `dessert` (acrescentada ao `src/lexicon.ts` de lá, que mapeia
+palavras como "sorvete", "gelato" e "sobremesa" para essa tag). O registro guarda a URL de
+produção, não um caminho de repositório.
