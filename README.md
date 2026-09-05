@@ -55,7 +55,7 @@ transportes que compartilham a mesma definição (`src/mcp/tools.ts`):
 
 ```bash
 npm run mcp                    # servidor stdio
-npm run test:mcp               # 13 asserções no /api/mcp local
+npm run test:mcp               # 17 asserções no /api/mcp local
 npm run test:mcp -- https://gta7-icecream.vercel.app/api/mcp   # contra producao
 ```
 

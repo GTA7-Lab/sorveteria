@@ -36,7 +36,7 @@ Dois transportes, mesmas tools:
 - `api/*.ts` — rotas REST; `api/_respond.ts` — mapeia `{error}` do core para HTTP.
 - `public/index.html` — página única, sem framework.
 - `src/mcp/tools.ts` — definição das tools; `src/mcp/server.ts` (stdio) e `api/mcp.ts` (HTTP) só a plugam.
-- `scripts/smoke.ts` — 41 asserções sobre o core; `scripts/test-mcp-http.ts` — 13 asserções no `/api/mcp`
+- `scripts/smoke.ts` — 41 asserções sobre o core; `scripts/test-mcp-http.ts` — 17 asserções no `/api/mcp`
   com um cliente MCP real; `scripts/dev-server.ts` — dev local sem Vercel.
 
 ## Decisões relevantes
@@ -71,7 +71,7 @@ No Vercel, projeto `gta7-icecream` (time GTA7 LAB), Root Directory = raiz do rep
 No ar em https://gta7-icecream.vercel.app
 
 ## Status atual
-v1 completa e verificada: 41/41 no smoke do core, 13/13 no `/api/mcp`, `tsc --noEmit` limpo,
+v1 completa e verificada: 41/41 no smoke do core, 17/17 no `/api/mcp`, `tsc --noEmit` limpo,
 REST e site testados em produção.
 Registrada no Core (`core/data/entities.json`, tag `dessert`): `npm run smoke` do Core passa
 com `icecream.search_flavors` devolvendo itens.
