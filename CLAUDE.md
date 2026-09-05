@@ -20,17 +20,24 @@ Funciona sozinha (site + REST) e serve o Core Orchestrator via MCP.
 
 Chaves em inglês, conteúdo em português.
 
-## MCP tools (`src/mcp/server.ts`, stdio)
-- `search_flavors` — `query`, `category`, `dietary`, `avoid_allergens[]`, `max_price`, `only_available`
+## MCP tools (`src/mcp/tools.ts`, compartilhadas pelos dois transportes)
+- `search_flavors` — `query`, `category`, `dietary`, `avoid_allergens[]`, `max_price` (centavos),
+  `max_price_brl` (reais), `limit`, `only_available`
 - `quote_order` — `format`, `flavor_ids[]`, `toppings[]`, `weekday`
 - `recommend_flavors` — `profile`, `dietary`, `avoid_allergens[]`, `limit`
+
+Dois transportes, mesmas tools:
+- **stdio** — `src/mcp/server.ts`, para rodar local (`npm run mcp`)
+- **HTTP streamable** — `api/mcp.ts`, em `/api/mcp`; é por aí que o Core Orchestrator consome
 
 ## Arquivos principais
 - `src/core.ts` — **toda** a regra de negócio. MCP e REST são wrappers finos.
 - `src/data.ts` — importa os JSON; `src/types.ts` — interfaces.
 - `api/*.ts` — rotas REST; `api/_respond.ts` — mapeia `{error}` do core para HTTP.
 - `public/index.html` — página única, sem framework.
-- `scripts/smoke.ts` — 41 asserções sobre o core; `scripts/dev-server.ts` — dev local sem Vercel.
+- `src/mcp/tools.ts` — definição das tools; `src/mcp/server.ts` (stdio) e `api/mcp.ts` (HTTP) só a plugam.
+- `scripts/smoke.ts` — 41 asserções sobre o core; `scripts/test-mcp-http.ts` — 13 asserções no `/api/mcp`
+  com um cliente MCP real; `scripts/dev-server.ts` — dev local sem Vercel.
 
 ## Decisões relevantes
 - **CommonJS** (`tsconfig` `module: commonjs` + `resolveJsonModule`) para que `import x from "../data/x.json"`
@@ -45,6 +52,15 @@ Chaves em inglês, conteúdo em português.
   ao formato, `applies_to: "total"` a um valor mínimo. Uma promoção por pedido — a de maior desconto.
 - **`is_open` no fuso `America/Sao_Paulo`** via `Intl.DateTimeFormat`, porque a Vercel roda em UTC.
 - Tools MCP declaradas com **JSON Schema puro** (API de baixo nível do SDK), sem escrever schemas zod.
+- **`/api/mcp` é stateless** (`sessionIdGenerator: undefined`), uma instância de `Server` por request —
+  é o que funciona em serverless.
+- **Apelido `items`** nas respostas de lista: o Core procura `items`/`results`/`data`/`list`, e sem isso
+  trataria a resposta inteira como um único item.
+- **`max_price_brl` existe para o Core**, que fala em reais (slot `maxPricePerPerson`); internamente
+  tudo continua em centavos.
+- **`query` não é mapeado no registro do Core**: ele manda a frase inteira do cidadão, que nunca casa
+  com nome de sabor e zeraria o resultado (limitação conhecida, documentada em `core/CLAUDE.md`).
+  Busca textual segue disponível via `call_entity_tool`.
 
 ## Onde vive
 Pasta `entities/icecream/` do monorepo `GTA7-Lab/gta7-lab`, ao lado de `bank`,
@@ -54,13 +70,12 @@ No Vercel, projeto `gta7-icecream` (time GTA7 LAB), Root Directory = `entities/i
 No ar em https://gta7-icecream.vercel.app
 
 ## Status atual
-v1 completa e verificada: 41/41 smoke tests, `tsc --noEmit` limpo, REST e site testados,
-handshake MCP (`initialize` → `tools/list` → `tools/call`) validado.
+v1 completa e verificada: 41/41 no smoke do core, 13/13 no `/api/mcp`, `tsc --noEmit` limpo,
+REST e site testados em produção.
+Registrada no Core (`core/data/entities.json`, tag `dessert`): `npm run smoke` do Core passa
+com `icecream.search_flavors` devolvendo itens.
+Deploy automático: push na `main` publica em https://gta7-icecream.vercel.app
 
 ## Próxima tarefa
-Registrar a entidade no Core Orchestrator: `core/src/entities/` hoje só tem
-`restaurants.ts` e `venues.ts`, falta o equivalente para `icecream` apontando
-para `/api/manifest`.
-
-Deploy ainda é manual (`npx vercel --prod` dentro de `entities/icecream/`): a GitHub App
-do Vercel não está instalada no repositório, então push não dispara deploy automático.
+Nada pendente. Ideias, se houver tempo: `orders.json` com `create_order` (exige banco ou
+storage, já que o filesystem da Vercel é read-only) e sabor do dia rotativo por data.

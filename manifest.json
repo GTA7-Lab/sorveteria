@@ -10,7 +10,7 @@
     "recomendar_sabores"
   ],
   "mcp": {
-    "transport": "stdio",
+    "transport": "http",
     "tools": [
       {
         "name": "search_flavors",
@@ -24,7 +24,8 @@
         "name": "recommend_flavors",
         "description": "Recomenda de 1 a 5 sabores conforme um perfil de gosto e restrições alimentares, com uma justificativa por sugestão."
       }
-    ]
+    ],
+    "endpoint": "/api/mcp"
   },
   "http": {
     "manifest": "GET /api/manifest",
@@ -32,6 +33,7 @@
     "flavors": "GET /api/flavors?query=&category=&dietary=&avoid_allergens=&max_price=&only_available=",
     "flavor": "GET /api/flavors/:id",
     "quote": "GET /api/quote, POST /api/quote",
-    "recommend": "GET /api/recommend?profile=&dietary=&limit="
+    "recommend": "GET /api/recommend?profile=&dietary=&limit=",
+    "mcp": "GET/POST /api/mcp (Streamable HTTP, consumido pelo Core)"
   }
 }
