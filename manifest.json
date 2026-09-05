@@ -1,0 +1,37 @@
+{
+  "id": "icecream",
+  "name": "Sorveteria Polar",
+  "description": "Sorveteria artesanal da cidade GTA7 Lab: consulta sabores, preços e disponibilidade, calcula o preço de um pedido e recomenda sabores por perfil e restrição alimentar.",
+  "capabilities": [
+    "consultar_cardapio",
+    "filtrar_por_restricao_alimentar",
+    "consultar_horario_e_disponibilidade",
+    "calcular_preco_pedido",
+    "recomendar_sabores"
+  ],
+  "mcp": {
+    "transport": "stdio",
+    "tools": [
+      {
+        "name": "search_flavors",
+        "description": "Lista e filtra sabores por texto, categoria, restrição alimentar, alergênico a evitar e preço máximo. Por padrão devolve apenas o que está disponível hoje."
+      },
+      {
+        "name": "quote_order",
+        "description": "Calcula o preço de um pedido a partir do formato, dos sabores e dos adicionais, aplicando a promoção válida no dia."
+      },
+      {
+        "name": "recommend_flavors",
+        "description": "Recomenda de 1 a 5 sabores conforme um perfil de gosto e restrições alimentares, com uma justificativa por sugestão."
+      }
+    ]
+  },
+  "http": {
+    "manifest": "GET /api/manifest",
+    "shop": "GET /api/shop",
+    "flavors": "GET /api/flavors?query=&category=&dietary=&avoid_allergens=&max_price=&only_available=",
+    "flavor": "GET /api/flavors/:id",
+    "quote": "GET /api/quote, POST /api/quote",
+    "recommend": "GET /api/recommend?profile=&dietary=&limit="
+  }
+}

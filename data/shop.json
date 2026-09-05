@@ -1,0 +1,22 @@
+{
+  "id": "icecream",
+  "name": "Sorveteria Polar",
+  "public_name": "Sorveteria Polar - Gelato & Sorvetes Artesanais",
+  "description": "Sorveteria artesanal do centro da GTA7 Lab: gelatos, sorbets e opções veganas e zero açúcar.",
+  "address": "Avenida Central, 742 - Centro",
+  "district": "Centro",
+  "phone": "+55 11 4002-8922",
+  "timezone": "America/Sao_Paulo",
+  "payment_methods": ["dinheiro", "pix", "cartao_credito", "cartao_debito", "vale_refeicao"],
+  "delivery": true,
+  "flavor_of_the_day": "gelato-stracciatella",
+  "hours": {
+    "sun": { "open": "13:00", "close": "22:00" },
+    "mon": null,
+    "tue": { "open": "12:00", "close": "22:00" },
+    "wed": { "open": "12:00", "close": "22:00" },
+    "thu": { "open": "12:00", "close": "22:00" },
+    "fri": { "open": "12:00", "close": "23:30" },
+    "sat": { "open": "11:00", "close": "23:30" }
+  }
+}

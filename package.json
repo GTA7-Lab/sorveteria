@@ -1,0 +1,23 @@
+{
+  "name": "gta7-icecream",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sorveteria Polar - entidade icecream da cidade GTA7 Lab",
+  "scripts": {
+    "mcp": "tsx src/mcp/server.ts",
+    "smoke": "tsx scripts/smoke.ts",
+    "typecheck": "tsc --noEmit",
+    "dev": "vercel dev",
+    "dev:local": "tsx scripts/dev-server.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "zod": "^4.5.4"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@vercel/node": "^5.0.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0"
+  }
+}

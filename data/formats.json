@@ -1,0 +1,8 @@
+[
+  { "id": "casquinha",  "name": "Casquinha",        "description": "Casquinha crocante tradicional.",      "included_scoops": 1, "max_scoops": 2, "base_price_cents": 300 },
+  { "id": "copo",       "name": "Copo",             "description": "Copo de 200 ml com colher.",           "included_scoops": 1, "max_scoops": 3, "base_price_cents": 400 },
+  { "id": "taca",       "name": "Taça",             "description": "Taça de vidro servida na loja.",       "included_scoops": 3, "max_scoops": 4, "base_price_cents": 900 },
+  { "id": "milkshake",  "name": "Milkshake",        "description": "Batido com leite, 400 ml.",            "included_scoops": 2, "max_scoops": 2, "base_price_cents": 1500 },
+  { "id": "pote_500ml", "name": "Pote de 500 ml",   "description": "Pote fechado para viagem.",            "included_scoops": 3, "max_scoops": 3, "base_price_cents": 1200 },
+  { "id": "pote_1l",    "name": "Pote de 1 litro",  "description": "Pote grande para levar para casa.",    "included_scoops": 5, "max_scoops": 5, "base_price_cents": 2000 }
+]

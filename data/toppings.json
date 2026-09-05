@@ -1,0 +1,9 @@
+[
+  { "id": "cobertura_chocolate", "name": "Cobertura de chocolate", "price_cents": 300, "allergens": ["leite", "soja"] },
+  { "id": "calda_morango",       "name": "Calda de morango",       "price_cents": 250, "allergens": [] },
+  { "id": "granulado_colorido",  "name": "Granulado colorido",     "price_cents": 200, "allergens": ["leite", "soja", "gluten"] },
+  { "id": "castanha_caju",       "name": "Castanha de caju",       "price_cents": 400, "allergens": ["castanhas"] },
+  { "id": "pacoca_triturada",    "name": "Paçoca triturada",       "price_cents": 300, "allergens": ["amendoim"] },
+  { "id": "chantilly",           "name": "Chantilly",              "price_cents": 300, "allergens": ["leite"] },
+  { "id": "cereja",              "name": "Cereja em calda",        "price_cents": 200, "allergens": [] }
+]

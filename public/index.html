@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sorveteria Polar - GTA7 Lab</title>
+<style>
+  :root {
+    --bg: #f4f7fb; --card: #fff; --ink: #16222e; --muted: #6b7c8c;
+    --line: #dde5ee; --brand: #1f7ae0; --ok: #12855c; --off: #b23b3b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 15px/1.5 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 24px 16px 56px; }
+
+  header h1 { margin: 0 0 4px; font-size: 26px; }
+  header p { margin: 0; color: var(--muted); }
+  .status { display: inline-block; margin-top: 10px; padding: 3px 10px; border-radius: 999px;
+            font-size: 13px; font-weight: 600; color: #fff; background: var(--muted); }
+  .status.open { background: var(--ok); }
+  .status.closed { background: var(--off); }
+
+  .featured { margin: 20px 0; padding: 16px; border-radius: 10px; background: var(--card);
+              border: 1px solid var(--line); border-left: 4px solid var(--brand); }
+  .featured .label { font-size: 12px; text-transform: uppercase; letter-spacing: .06em;
+                     color: var(--brand); font-weight: 700; }
+  .featured h2 { margin: 4px 0; font-size: 19px; }
+  .featured p { margin: 0; color: var(--muted); }
+
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0 14px; }
+  .filters button { padding: 7px 14px; border-radius: 999px; cursor: pointer; font-size: 14px;
+                    background: var(--card); border: 1px solid var(--line); color: var(--ink); }
+  .filters button:hover { border-color: var(--brand); }
+  .filters button[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); color: #fff; }
+
+  .count { color: var(--muted); font-size: 14px; margin-bottom: 12px; }
+
+  .grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+  .flavor { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px; }
+  .flavor h3 { margin: 0 0 4px; font-size: 16px; }
+  .flavor .desc { margin: 0 0 10px; color: var(--muted); font-size: 14px; }
+  .flavor .price { font-weight: 700; font-size: 17px; }
+  .flavor .per { color: var(--muted); font-weight: 400; font-size: 13px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
+  .tag { font-size: 12px; padding: 2px 8px; border-radius: 999px; background: #eaf2fd; color: #1a5fae; }
+  .tag.cat { background: #eef0f3; color: #55636f; }
+  .tag.warn { background: #fdf0e7; color: #a35a1d; }
+
+  footer { margin-top: 40px; padding-top: 18px; border-top: 1px solid var(--line);
+           color: var(--muted); font-size: 13px; }
+  footer code { background: #e8edf4; padding: 1px 6px; border-radius: 4px; }
+  .msg { padding: 20px; text-align: center; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1 id="shop-name">Sorveteria Polar</h1>
+    <p id="shop-address">Carregando...</p>
+    <span class="status" id="shop-status">...</span>
+  </header>
+
+  <section class="featured" id="featured" hidden>
+    <div class="label">Sabor do dia</div>
+    <h2 id="featured-name"></h2>
+    <p id="featured-desc"></p>
+  </section>
+
+  <nav class="filters" id="filters">
+    <button data-dietary="" aria-pressed="true">Todos</button>
+    <button data-dietary="vegano" aria-pressed="false">Vegano</button>
+    <button data-dietary="sem_lactose" aria-pressed="false">Sem lactose</button>
+    <button data-dietary="sem_gluten" aria-pressed="false">Sem gluten</button>
+    <button data-dietary="zero_acucar" aria-pressed="false">Zero acucar</button>
+  </nav>
+
+  <p class="count" id="count"></p>
+  <div class="grid" id="grid"><p class="msg">Carregando o cardapio...</p></div>
+
+  <footer>
+    Entidade <strong>icecream</strong> da cidade GTA7 Lab. Dados servidos por
+    <code>/api/flavors</code>, <code>/api/shop</code> e <code>/api/manifest</code>.
+  </footer>
+
+</div>
+
+<script>
+  // Precos trafegam em centavos; a formatacao em reais acontece so aqui.
+  const brl = (cents) =>
+    (cents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+  const el = (id) => document.getElementById(id);
+
+  async function loadShop() {
+    try {
+      const shop = await fetch("/api/shop").then((r) => r.json());
+      el("shop-name").textContent = shop.public_name;
+      el("shop-address").textContent = shop.address + " - " + shop.phone;
+
+      const status = el("shop-status");
+      const today = shop.today_hours;
+      status.textContent = shop.is_open
+        ? "Aberta agora - ate " + today.close
+        : today
+          ? "Fechada - hoje das " + today.open + " as " + today.close
+          : "Fechada - nao abre " + shop.weekday_name.replace("-feira", "");
+      status.className = "status " + (shop.is_open ? "open" : "closed");
+
+      if (shop.flavor_of_the_day) {
+        el("featured-name").textContent =
+          shop.flavor_of_the_day.name + " - " + brl(shop.flavor_of_the_day.price_cents);
+        el("featured-desc").textContent = shop.flavor_of_the_day.description;
+        el("featured").hidden = false;
+      }
+    } catch (err) {
+      el("shop-address").textContent = "Nao foi possivel carregar os dados da loja.";
+    }
+  }
+
+  function cardFor(f) {
+    const card = document.createElement("article");
+    card.className = "flavor";
+
+    const title = document.createElement("h3");
+    title.textContent = f.name;
+    const desc = document.createElement("p");
+    desc.className = "desc";
+    desc.textContent = f.description;
+    const price = document.createElement("div");
+    price.className = "price";
+    price.innerHTML = brl(f.price_cents) + ' <span class="per">por bola</span>';
+
+    const tags = document.createElement("div");
+    tags.className = "tags";
+    const add = (text, cls) => {
+      const s = document.createElement("span");
+      s.className = "tag " + (cls || "");
+      s.textContent = text;
+      tags.appendChild(s);
+    };
+    add(f.category.replace("_", " "), "cat");
+    // Categoria e tag de dieta se sobrepoem (existe categoria "vegano" e tag "vegano");
+    // mostrar as duas repetiria o mesmo rotulo no card.
+    f.dietary.filter((t) => t !== f.category).forEach((t) => add(t.replace(/_/g, " ")));
+    if (f.allergens.length) add("contem " + f.allergens.join(", "), "warn");
+
+    card.append(title, desc, price, tags);
+    return card;
+  }
+
+  async function loadFlavors(dietary) {
+    const grid = el("grid");
+    grid.innerHTML = '<p class="msg">Carregando...</p>';
+    try {
+      // O filtro roda no servidor, na mesma funcao que a MCP tool search_flavors usa.
+      const url = "/api/flavors" + (dietary ? "?dietary=" + encodeURIComponent(dietary) : "");
+      const data = await fetch(url).then((r) => r.json());
+
+      if (data.error) throw new Error(data.error.message);
+
+      el("count").textContent =
+        data.count + (data.count === 1 ? " sabor disponivel" : " sabores disponiveis");
+
+      grid.innerHTML = "";
+      if (data.count === 0) {
+        grid.innerHTML = '<p class="msg">Nenhum sabor disponivel com esse filtro hoje.</p>';
+        return;
+      }
+      data.flavors.forEach((f) => grid.appendChild(cardFor(f)));
+    } catch (err) {
+      el("count").textContent = "";
+      grid.innerHTML = '<p class="msg">Erro ao carregar o cardapio: ' + err.message + "</p>";
+    }
+  }
+
+  el("filters").addEventListener("click", (event) => {
+    const button = event.target.closest("button");
+    if (!button) return;
+    for (const b of el("filters").children) {
+      b.setAttribute("aria-pressed", String(b === button));
+    }
+    loadFlavors(button.dataset.dietary);
+  });
+
+  loadShop();
+  loadFlavors("");
+</script>
+</body>
+</html>

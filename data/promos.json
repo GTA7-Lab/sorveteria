@@ -1,0 +1,30 @@
+[
+  {
+    "id": "terca-da-casquinha",
+    "name": "Terça da Casquinha",
+    "description": "Toda terça-feira, 20% de desconto em qualquer casquinha.",
+    "weekdays": [2],
+    "rule": { "type": "percent_off", "value": 20, "applies_to": "format", "format_ids": ["casquinha"] }
+  },
+  {
+    "id": "quarta-do-pote",
+    "name": "Quarta do Pote",
+    "description": "R$ 5,00 de desconto nos potes às quartas-feiras.",
+    "weekdays": [3],
+    "rule": { "type": "fixed_off", "value": 500, "applies_to": "format", "format_ids": ["pote_500ml", "pote_1l"] }
+  },
+  {
+    "id": "combo-cinema",
+    "name": "Combo Cinema",
+    "description": "10% de desconto em pedidos acima de R$ 30,00, todos os dias.",
+    "weekdays": [0, 1, 2, 3, 4, 5, 6],
+    "rule": { "type": "percent_off", "value": 10, "applies_to": "total", "min_total_cents": 3000 }
+  },
+  {
+    "id": "fim-de-semana-familia",
+    "name": "Fim de Semana em Família",
+    "description": "15% de desconto em pedidos acima de R$ 50,00 no sábado e domingo.",
+    "weekdays": [0, 6],
+    "rule": { "type": "percent_off", "value": 15, "applies_to": "total", "min_total_cents": 5000 }
+  }
+]
